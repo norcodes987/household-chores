@@ -39,7 +39,8 @@ export default function HouseholdPage() {
       .from('profiles')
       .update({ household_id: household.id })
       .eq('user_id', user.id);
-
+    // Small delay to ensure DB write is committed before server component reads it
+    await new Promise((resolve) => setTimeout(resolve, 500));
     router.push('/');
     router.refresh();
   }
