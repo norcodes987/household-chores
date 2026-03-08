@@ -1,9 +1,10 @@
 'use client';
 
 import { Profile } from '@/lib/types';
-import { CalendarDays, CheckSquare, ClipboardList, Icon } from 'lucide-react';
+import { CalendarDays, CheckSquare, ClipboardList } from 'lucide-react';
 import { useState } from 'react';
 import ChoresTab from './ChoresTab';
+import TodayTab from './TodayTab';
 
 type Tab = 'chores' | 'today' | 'calendar';
 
@@ -12,7 +13,7 @@ export default function AppShell({
 }: {
   currentProfile: Profile;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>('chores');
+  const [activeTab, setActiveTab] = useState<Tab>('today');
   return (
     <div className='min-h-screen flex flex-col max-w-md mx-auto'>
       {/* Header */}
@@ -35,9 +36,7 @@ export default function AppShell({
           <ChoresTab currentProfile={currentProfile} />
         )}
 
-        {activeTab === 'today' && (
-          <div className='p-4 text-gray-400 text-center mt-20'>Today tab</div>
-        )}
+        {activeTab === 'today' && <TodayTab currentProfile={currentProfile} />}
         {activeTab === 'calendar' && (
           <div className='p-4 text-gray-400 text-center mt-20'>
             Calendar tab

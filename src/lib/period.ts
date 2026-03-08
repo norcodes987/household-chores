@@ -23,3 +23,18 @@ export function getPeriodKey(
   // monthly
   return date.toISOString().slice(0, 7); //"2026-03"
 }
+
+export function isChoreToday(
+  chore: {
+    recurrence: string;
+    day_of_week: number | null;
+    day_of_month: number | null;
+  },
+  date = new Date(),
+): boolean {
+  if (chore.recurrence === 'daily') return true;
+  if (chore.recurrence === 'weekly') return chore.day_of_week === date.getDay();
+  if (chore.recurrence === 'monthly')
+    return chore.day_of_month === date.getDate();
+  return false;
+}

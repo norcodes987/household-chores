@@ -14,15 +14,14 @@ type Props = {
 };
 
 const DAYS = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
+  { label: 'Monday', value: 1 },
+  { label: 'Tuesday', value: 2 },
+  { label: 'Wednesday', value: 3 },
+  { label: 'Thursday', value: 4 },
+  { label: 'Friday', value: 5 },
+  { label: 'Saturday', value: 6 },
+  { label: 'Sunday', value: 0 },
 ];
-
 export default function ChoreSheet({
   open,
   onClose,
@@ -32,7 +31,7 @@ export default function ChoreSheet({
   onSaved,
 }: Props) {
   const supabase = createClient();
-  const [name, setName] = useState('');
+  const [name, setName] = useState<string>('');
   const [assignedTo, setAssignedTo] = useState<string>('');
   const [recurrence, setRecurrence] = useState<'daily' | 'weekly' | 'monthly'>(
     'weekly',
@@ -167,9 +166,9 @@ export default function ChoreSheet({
               value={dayOfWeek}
               onChange={(e) => setDayOfWeek(Number(e.target.value))}
             >
-              {DAYS.map((d, i) => (
-                <option key={i} value={i}>
-                  {d}
+              {DAYS.map((d) => (
+                <option key={d.value} value={d.value}>
+                  {d.label}
                 </option>
               ))}
             </select>
