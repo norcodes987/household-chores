@@ -1,12 +1,19 @@
 'use client';
 
 import { Profile } from '@/lib/types';
-import { CalendarDays, CheckSquare, ClipboardList } from 'lucide-react';
+import {
+  CalendarDays,
+  CheckSquare,
+  ClipboardList,
+  Settings,
+} from 'lucide-react';
 import { useState } from 'react';
 import ChoresTab from './ChoresTab';
 import TodayTab from './TodayTab';
+import CalendarTab from './CalendarTab';
+import SettingsTab from './SettingsTab';
 
-type Tab = 'chores' | 'today' | 'calendar';
+type Tab = 'chores' | 'today' | 'calendar' | 'settings';
 
 export default function AppShell({
   currentProfile,
@@ -38,9 +45,10 @@ export default function AppShell({
 
         {activeTab === 'today' && <TodayTab currentProfile={currentProfile} />}
         {activeTab === 'calendar' && (
-          <div className='p-4 text-gray-400 text-center mt-20'>
-            Calendar tab
-          </div>
+          <CalendarTab currentProfile={currentProfile} />
+        )}
+        {activeTab === 'settings' && (
+          <SettingsTab currentProfile={currentProfile} />
         )}
       </main>
 
@@ -52,6 +60,7 @@ export default function AppShell({
               { id: 'today', label: 'Today', icon: CheckSquare },
               { id: 'chores', label: 'Chores', icon: ClipboardList },
               { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+              { id: 'settings', label: 'Settings', icon: Settings },
             ] as { id: Tab; label: string; icon: any }[]
           ).map(({ id, label, icon: Icon }) => (
             <button

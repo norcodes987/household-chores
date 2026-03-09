@@ -12,6 +12,8 @@ export default function HouseholdPage() {
   const [householdName, setHouseholdName] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [createdCode, setCreatedCode] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   async function createHousehold() {
     setLoading(true);
@@ -39,10 +41,9 @@ export default function HouseholdPage() {
       .from('profiles')
       .update({ household_id: household.id })
       .eq('user_id', user.id);
-    // Small delay to ensure DB write is committed before server component reads it
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    router.push('/');
-    router.refresh();
+
+    setCreatedCode(household.invite_code);
+    setLoading(false);
   }
 
   async function joinHousehold() {
@@ -74,6 +75,60 @@ export default function HouseholdPage() {
 
     router.push('/');
     router.refresh();
+  }
+
+  async function copyCode() {
+    if (!createdCode) return;
+    await navigator.clipboard.writeText(createdCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function continueToApp() {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    router.push('/');
+    router.refresh();
+  }
+
+  if (createdCode) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-gray-50 p-4'>
+        <div className='bg-white rounded-2xl shadow p-8 w-full max-w-sm text-center'>
+          <p className='text-4xl mb-3'>🏠</p>
+          <h1 className='text-xl font-bold mb-1'>Household created!</h1>
+          <p className='text-gray-500 text-sm mb-6'>
+            Share this code with your partner so they can join
+          </p>
+
+          <div className='bg-gray-50 rounded-xl p-4 mb-3'>
+            <p className='text-xs text-gray-400 mb-1 uppercase tracking-wide'>
+              Invite code
+            </p>
+            <p className='text-3xl font-mono font-bold tracking-widest text-gray-800'>
+              {createdCode}
+            </p>
+          </div>
+
+          <button
+            onClick={copyCode}
+            className='w-full border border-gray-200 rounded-lg py-2 text-sm font-medium mb-6 transition-colors hover:bg-gray-50'
+          >
+            {copied ? '✓ Copied!' : 'Copy code'}
+          </button>
+
+          <button
+            onClick={continueToApp}
+            className='w-full bg-teal-500 text-white rounded-lg py-2.5 font-medium'
+          >
+            Continue to app →
+          </button>
+
+          <p className='text-xs text-gray-400 mt-4'>
+            You can find this code again in Settings
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -38,3 +38,34 @@ export function isChoreToday(
     return chore.day_of_month === date.getDate();
   return false;
 }
+
+export function getChoresForDate(
+  chores: {
+    id: string;
+    recurrence: string;
+    day_of_week: number | null;
+    day_of_month: number | null;
+  }[],
+  date: Date,
+): string[] {
+  return chores.filter((c) => isChoreToday(c, date)).map((c) => c.id);
+}
+
+export function getDaysInMonth(year: number, month: number): Date[] {
+  const days: Date[] = [];
+  const date = new Date(year, month, 1);
+  while (date.getMonth() === month) {
+    days.push(new Date(date));
+    date.setDate(date.getDate() + 1);
+  }
+  return days;
+}
+
+export function getCalendarGrid(year: number, month: number): (Date | null)[] {
+  const days = getDaysInMonth(year, month);
+  const firstDay = days[0].getDay(); // 0 = sunday
+  //shift so Monday is first (0=Mon, 6=Sun)
+  const offset = (firstDay + 6) % 7;
+  const grid: (Date | null)[] = Array(offset).fill(null);
+  return [...grid, ...days];
+}
