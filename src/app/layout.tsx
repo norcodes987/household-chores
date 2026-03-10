@@ -1,12 +1,25 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
   title: 'Household Chores',
   description: 'Shared chore tracker for your household',
-  // manifest: '/manifest.json',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Chores',
+  },
 };
 
+export const viewport: Viewport = {
+  themeColor: '#14b8a6',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 export default function RootLayout({
   children,
 }: {
@@ -14,7 +27,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className='bg-gray-50 min-h-screen'>{children}</body>
+      <link rel='apple-touch-icon' href='/icon-192.png' />
+      <body className='bg-gray-50 min-h-screen'>
+        <ServiceWorkerRegistration />
+        {children}
+      </body>
     </html>
   );
 }

@@ -48,7 +48,6 @@ export function usePushNotifications(currentProfile: Profile) {
           process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
         ) as string | BufferSource | null | undefined,
       });
-      console.log('subscription: ', subscription);
 
       // Save to Supabase
       const {
