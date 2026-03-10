@@ -4,6 +4,7 @@ export type Profile = {
   household_id: string;
   name: string;
   colour: string;
+  notify_time: string;
 };
 
 export type Chore = {

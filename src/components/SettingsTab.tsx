@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Profile } from '@/lib/types';
 import { useRouter } from 'next/navigation';
-import { Copy, Check, LogOut } from 'lucide-react';
+import { Copy, Check, LogOut, Bell, BellOff } from 'lucide-react';
+import { usePushNotifications } from '@/lib/usePushNotifications';
 
 type Household = {
   id: string;
@@ -29,12 +30,29 @@ export default function SettingsTab({
 }) {
   const supabase = createClient();
   const router = useRouter();
+  const {
+    isSubscribed,
+    isLoading: pushLoading,
+    subscribe,
+    unsubscribe,
+  } = usePushNotifications(currentProfile);
+
   const [household, setHousehold] = useState<Household | null>(null);
   const [name, setName] = useState(currentProfile.name);
   const [colour, setColour] = useState(currentProfile.colour);
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [timeSaved, setTimeSaved] = useState(false);
+
+  const [utcH, utcM] = (currentProfile.notify_time ?? '00:00')
+    .split(':')
+    .map(Number);
+  const utcDate = new Date();
+  utcDate.setUTCHours(utcH, utcM, 0, 0);
+  const localHours = String(utcDate.getHours()).padStart(2, '0');
+  const localMins = String(utcDate.getMinutes()).padStart(2, '0');
+  const [notifyTime, setNotifyTime] = useState(`${localHours}:${localMins}`);
 
   useEffect(() => {
     async function fetchHousehold() {
@@ -70,6 +88,28 @@ export default function SettingsTab({
     await supabase.auth.signOut();
     router.push('/login');
     router.refresh();
+  }
+
+  async function saveNotifyTime() {
+    // Convert local time input to UTC for storage
+    const [hours, minutes] = notifyTime.split(':').map(Number);
+
+    // Create a date object with today's date at the chosen local time
+    const localDate = new Date();
+    localDate.setHours(hours, minutes, 0, 0);
+
+    // Extract the UTC equivalent
+    const utcHours = String(localDate.getUTCHours()).padStart(2, '0');
+    const utcMinutes = String(localDate.getUTCMinutes()).padStart(2, '0');
+    const utcTime = `${utcHours}:${utcMinutes}`;
+
+    await supabase
+      .from('profiles')
+      .update({ notify_time: utcTime })
+      .eq('id', currentProfile.id);
+
+    setTimeSaved(true);
+    setTimeout(() => setTimeSaved(false), 2000);
   }
 
   return (
@@ -159,6 +199,67 @@ export default function SettingsTab({
           <LogOut size={16} />
           Sign out
         </button>
+      </div>
+
+      {/* Notifications section */}
+      <div className='bg-white rounded-2xl shadow-sm p-5'>
+        <h3 className='font-bold text-sm text-gray-500 uppercase tracking-wide mb-4'>
+          Notifications
+        </h3>
+
+        <div className='flex items-center justify-between mb-4'>
+          <div>
+            <p className='font-medium text-sm'>Daily reminders</p>
+            <p className='text-xs text-gray-400 mt-0.5'>
+              {isSubscribed
+                ? 'You will be notified of your chores'
+                : 'Get notified when chores are due'}
+            </p>
+          </div>
+          <button
+            onClick={isSubscribed ? unsubscribe : subscribe}
+            disabled={pushLoading}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50
+        ${
+          isSubscribed
+            ? 'bg-red-50 text-red-500 hover:bg-red-100'
+            : 'bg-teal-500 text-white hover:bg-teal-600'
+        }`}
+          >
+            {isSubscribed ? (
+              <>
+                <BellOff size={15} /> Turn off
+              </>
+            ) : (
+              <>
+                <Bell size={15} /> Turn on
+              </>
+            )}
+          </button>
+        </div>
+
+        {isSubscribed && (
+          <>
+            <p className='text-sm text-gray-500 mb-1'>Reminder time</p>
+            <div className='flex gap-2'>
+              <input
+                type='time'
+                className='flex-1 border rounded-lg px-4 py-2 text-sm'
+                value={notifyTime}
+                onChange={(e) => setNotifyTime(e.target.value)}
+              />
+              <button
+                onClick={saveNotifyTime}
+                className='bg-teal-500 text-white px-4 rounded-lg text-sm font-medium'
+              >
+                {timeSaved ? '✓' : 'Save'}
+              </button>
+            </div>
+            <p className='text-xs text-gray-400 mt-2'>
+              You'll be reminded at this time on days you have chores due
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
