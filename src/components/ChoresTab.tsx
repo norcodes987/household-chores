@@ -101,7 +101,7 @@ export default function ChoresTab({
   return (
     <div className='p-4'>
       <div className='flex items-center justify-between mb-4'>
-        <h2 className='text-lg font-bold'>All Chores</h2>
+        <h2 className='text-lg font-bold text-gray-900'>All Chores</h2>
         <button
           onClick={openAdd}
           className='flex items-center gap-1 bg-teal-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium'

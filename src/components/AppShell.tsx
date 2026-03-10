@@ -24,8 +24,8 @@ export default function AppShell({
   return (
     <div className='min-h-screen flex flex-col max-w-md mx-auto'>
       {/* Header */}
-      <header className='bg-white border-b px-4 py-3 flex items-cemter justify-between sticky top-0 z-10'>
-        <h1 className='font-bold text-lg'>🏠 Household Chores</h1>
+      <header className='bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-10'>
+        <h1 className='font-bold text-lg text-gray-900'>🏠 Household Chores</h1>
         <div className='flex items-center gap-2'>
           <div
             className='w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold'

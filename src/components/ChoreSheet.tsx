@@ -98,7 +98,7 @@ export default function ChoreSheet({
       {/* Sheet */}
       <div className='fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-30 p-6 max-w-md mx-auto'>
         <div className='flex items-center justify-between mb-5'>
-          <h2 className='text-lg font-bold'>
+          <h2 className='text-lg font-bold text-gray-900'>
             {chore ? 'Edit Chore' : 'Add Chore'}
           </h2>
           <button
@@ -114,7 +114,7 @@ export default function ChoreSheet({
           Chore
         </label>
         <input
-          className='w-full border rounded-lg px-4 py-2 mb-4 text-sm'
+          className='w-full border rounded-lg px-4 py-2 mb-4 text-sm text-gray-900'
           placeholder='e.g. Vacuum living room'
           value={name}
           onChange={(e) => setName(e.target.value)}

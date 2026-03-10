@@ -137,7 +137,7 @@ export default function TodayTab({
       {/* Date header */}
       <div className='mb-4'>
         <p className='text-xs text-gray-400 uppercase tracking-wide'>{today}</p>
-        <h2 className='text-lg font-bold'>Your chores today</h2>
+        <h2 className='text-lg font-bold text-gray-900'>Your chores today</h2>
         {myChores.length > 0 && (
           <p className='text-sm text-gray-400 mt-0.5'>
             {doneCount} of {myChores.length}

@@ -128,7 +128,7 @@ export default function SettingsTab({
 
         <p className='text-sm text-gray-500 mb-1'>Display name</p>
         <input
-          className='w-full border rounded-lg px-4 py-2 mb-4 text-sm'
+          className='w-full border rounded-lg px-4 py-2 mb-4 text-sm text-gray-900'
           value={name}
           onChange={(e) => setName(e.target.value)}
         />

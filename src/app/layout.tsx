@@ -27,7 +27,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <link rel='apple-touch-icon' href='/icon-192.png' />
+      <link
+        rel='apple-touch-icon'
+        sizes='180x180'
+        href='/apple-touch-icon.png'
+      />
       <body className='bg-gray-50 min-h-screen'>
         <ServiceWorkerRegistration />
         {children}

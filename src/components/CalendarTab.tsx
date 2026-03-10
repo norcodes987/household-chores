@@ -137,7 +137,7 @@ export default function CalendarTab({
         >
           <ChevronLeft size={20} />
         </button>
-        <h2 className='font-bold text-base'>{monthName}</h2>
+        <h2 className='font-bold text-base text-gray-900'>{monthName}</h2>
         <button
           onClick={nextMonth}
           className='p-2 hover:bg-gray-100 rounded-lg'

@@ -31,18 +31,18 @@ export default function LoginPage() {
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 p-4'>
       <div className='bg-white rounded-2xl shadow p-8 w-full max-w-sm'>
-        <h1 className='text-2xl font-bold mb-6 text-center'>
+        <h1 className='text-2xl font-bold mb-6 text-center text-gray-900'>
           🏠 Household Chores
         </h1>
         <input
-          className='w-full border rounded-lg px-4 py-2 mb-3 text-sm'
+          className='w-full border rounded-lg px-4 py-2 mb-3 text-sm text-gray-900'
           type='email'
           placeholder='Email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          className='w-full border rounded-lg px-4 py-2 mb-3 text-sm'
+          className='w-full border rounded-lg px-4 py-2 mb-3 text-sm text-gray-900'
           type='password'
           placeholder='Password'
           value={password}

@@ -96,7 +96,9 @@ export default function HouseholdPage() {
       <div className='min-h-screen flex items-center justify-center bg-gray-50 p-4'>
         <div className='bg-white rounded-2xl shadow p-8 w-full max-w-sm text-center'>
           <p className='text-4xl mb-3'>🏠</p>
-          <h1 className='text-xl font-bold mb-1'>Household created!</h1>
+          <h1 className='text-xl font-bold mb-1 text-gray-900'>
+            Household created!
+          </h1>
           <p className='text-gray-500 text-sm mb-6'>
             Share this code with your partner so they can join
           </p>
@@ -135,7 +137,7 @@ export default function HouseholdPage() {
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 p-4'>
       <div className='bg-white rounded-2xl shadow p-8 w-full max-w-sm'>
-        <h1 className='text-2xl font-bold mb-6 text-center'>
+        <h1 className='text-2xl font-bold mb-6 text-center text-gray-900'>
           Set up your household
         </h1>
         <p className='text-gray-500 text-sm text-center mb-6'>
@@ -145,7 +147,7 @@ export default function HouseholdPage() {
         <div className='mb-6'>
           <p className='font-medium mb-2 text-sm'>Create new household</p>
           <input
-            className='w-full border-rounded-lg px-4 py-2 mb-2 text-sm'
+            className='w-full border-rounded-lg px-4 py-2 mb-2 text-sm text-gray-900'
             placeholder='Household name (e.g. The Chongs)'
             value={householdName}
             onChange={(e) => setHouseholdName(e.target.value)}
@@ -168,7 +170,7 @@ export default function HouseholdPage() {
         <div className='mb-6'>
           <p className='font-medium mb-2 text-sm'>Join with invite code</p>
           <input
-            className='w-full border-rounded-lg px-4 py-2 mb-2 text-sm'
+            className='w-full border-rounded-lg px-4 py-2 mb-2 text-sm text-gray-900'
             placeholder='Enter invite code'
             value={inviteCode}
             onChange={(e) => setInviteCode(e.target.value)}
