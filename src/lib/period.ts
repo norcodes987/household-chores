@@ -1,27 +1,38 @@
+import { Chore } from './types';
+
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`; // uses local time, not UTC
+}
+
+function getISOWeek(date: Date): string {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  const weekNum =
+    1 +
+    Math.round(
+      ((d.getTime() - week1.getTime()) / 86400000 -
+        3 +
+        ((week1.getDay() + 6) % 7)) /
+        7,
+    );
+  return `${date.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+}
+
 export function getPeriodKey(
   recurrence: 'daily' | 'weekly' | 'monthly',
   date = new Date(),
 ): string {
-  if (recurrence === 'daily') {
-    return date.toISOString().slice(0, 10); // "2026-03-7"
-  }
-  if (recurrence === 'weekly') {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
-    const week1 = new Date(d.getFullYear(), 0, 4);
-    const weekNum =
-      1 +
-      Math.round(
-        ((d.getTime() - week1.getTime()) / 86400000 -
-          3 +
-          ((week1.getDay() + 6) % 7)) /
-          7,
-      );
-    return `${date.getFullYear()}-W${String(weekNum).padStart(2, '0')}`; // "2026-W10"
-  }
+  if (recurrence === 'daily') return toLocalDateString(date);
+  if (recurrence === 'weekly') return getISOWeek(date);
   // monthly
-  return date.toISOString().slice(0, 7); //"2026-03"
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  return `${y}-${m}`;
 }
 
 export function isChoreToday(
@@ -63,9 +74,8 @@ export function getDaysInMonth(year: number, month: number): Date[] {
 
 export function getCalendarGrid(year: number, month: number): (Date | null)[] {
   const days = getDaysInMonth(year, month);
-  const firstDay = days[0].getDay(); // 0 = sunday
-  //shift so Monday is first (0=Mon, 6=Sun)
-  const offset = (firstDay + 6) % 7;
+  const firstDay = days[0].getDay();
+  const offset = (firstDay + 6) % 7; //sTART ON SUNDAY
   const grid: (Date | null)[] = Array(offset).fill(null);
   return [...grid, ...days];
 }

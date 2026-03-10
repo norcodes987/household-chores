@@ -59,8 +59,9 @@ export default function HouseholdPage() {
     const { data: household, error: hError } = await supabase
       .from('households')
       .select()
-      .eq('invite_code', inviteCode.trim().toLowerCase())
+      .ilike('invite_code', inviteCode.trim())
       .single();
+    console.log(hError);
     if (hError || !household) {
       setError(hError?.message ?? 'Invite code not found');
       setLoading(false);

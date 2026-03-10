@@ -18,6 +18,7 @@ export default function CalendarTab({
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
 
@@ -105,8 +106,11 @@ export default function CalendarTab({
     );
     if (allDone) return 'done';
 
-    const isPast =
-      date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    // Compare at local midnight to avoid timezone bleed
+    const dateAtMidnight = new Date(date);
+    dateAtMidnight.setHours(0, 0, 0, 0);
+    const isPast = dateAtMidnight < today;
+
     if (isPast) return 'overdue';
     return 'upcoming';
   }
@@ -171,7 +175,7 @@ export default function CalendarTab({
             const statusStyles = {
               done: 'bg-emerald-100 text-emerald-700',
               overdue: 'bg-red-100 text-red-600',
-              upcoming: 'bg-teal-50 text-teal-700',
+              upcoming: 'bg-blue-50 text-blue-700',
               empty: 'text-gray-500',
             };
 
@@ -204,7 +208,7 @@ export default function CalendarTab({
         {[
           { colour: 'bg-emerald-100 text-emerald-700', label: 'All done' },
           { colour: 'bg-red-100 text-red-600', label: 'Overdue' },
-          { colour: 'bg-teal-50 text-teal-700', label: 'Upcoming' },
+          { colour: 'bg-blue-50 text-blue-700', label: 'Upcoming' },
         ].map(({ colour, label }) => (
           <div key={label} className='flex items-center gap-1.5'>
             <div className={`w-3 h-3 rounded-sm ${colour.split(' ')[0]}`} />
