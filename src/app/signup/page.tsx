@@ -14,6 +14,7 @@ export default function SignupPage() {
   const [colour, setColour] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [verificationSent, setVerificationSent] = useState<boolean>(false);
 
   async function handleSignUp() {
     setLoading(true);
@@ -39,8 +40,8 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
-    router.push('/household');
-    router.refresh();
+    setVerificationSent(true);
+    setLoading(false);
   }
 
   const colours = [
@@ -51,7 +52,29 @@ export default function SignupPage() {
     '#3b82f6',
     '#f59e0b',
   ];
-
+  if (verificationSent) {
+    return (
+      <div className='min-h-screen flex items-center justify-center bg-gray-50 p-4'>
+        <div className='bg-white rounded-2xl shadow p-8 w-full max-w-sm text-center'>
+          <p className='text-4xl mb-3'>📬</p>
+          <h1 className='text-xl font-bold mb-2 text-gray-900'>
+            Check your email
+          </h1>
+          <p className='text-gray-500 text-sm mb-6'>
+            We sent a confirmation link to{' '}
+            <span className='font-medium text-gray-900'>{email}</span>. Click it
+            to activate your account then come back to sign in.
+          </p>
+          <a
+            href='/login'
+            className='block w-full bg-teal-500 text-white rounded-lg py-2.5 font-medium'
+          >
+            Go to sign in
+          </a>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 p-4'>
       <div className='bg-white rounded-2xl shadow p-8 w-full max-w-sm'>
