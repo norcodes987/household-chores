@@ -33,6 +33,8 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/signup');
   const isHouseholdPage = request.nextUrl.pathname.startsWith('/household');
+  const isCompleteProfilePage =
+    request.nextUrl.pathname.startsWith('/complete-profile');
 
   // not logged in --> send to /login
   if (!user && !isAuthPage) {
@@ -40,12 +42,16 @@ export async function middleware(request: NextRequest) {
   }
 
   // logged in but no household --> send to /household
-  if (user && !isHouseholdPage && !isAuthPage) {
+  if (user && !isHouseholdPage && !isAuthPage && !isCompleteProfilePage) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('household_id')
       .eq('user_id', user.id)
       .single();
+
+    if (!profile) {
+      return NextResponse.redirect(new URL('/complete-profile', request.url));
+    }
 
     if (profile && !profile.household_id) {
       return NextResponse.redirect(new URL('/household', request.url));

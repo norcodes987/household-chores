@@ -30,16 +30,9 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
+    // Store name and colour for after email confirmation
+    localStorage.setItem('pending_profile', JSON.stringify({ name, colour }));
 
-    // create profile
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({ user_id: authData.user.id, name, colour });
-    if (profileError) {
-      setError(profileError.message);
-      setLoading(false);
-      return;
-    }
     setVerificationSent(true);
     setLoading(false);
   }
