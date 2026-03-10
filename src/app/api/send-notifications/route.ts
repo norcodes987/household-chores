@@ -8,7 +8,6 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY!,
 );
 
-// Protect the endpoint with a secret so only Vercel Cron can call it
 const CRON_SECRET = process.env.CRON_SECRET;
 
 export async function GET(request: Request) {
@@ -17,21 +16,19 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Use service role to bypass RLS
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 
   const now = new Date();
-  const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   const dayOfWeek = now.getDay();
   const dayOfMonth = now.getDate();
 
-  // Get all profiles whose notify_time matches current time (within the hour)
+  // Get all profiles that belong to a household
   const { data: profiles } = await supabase
     .from('profiles')
-    .select('id, name, notify_time, household_id')
+    .select('id, name, household_id')
     .not('household_id', 'is', null);
 
   if (!profiles?.length) return NextResponse.json({ sent: 0 });
@@ -39,11 +36,6 @@ export async function GET(request: Request) {
   let sent = 0;
 
   for (const profile of profiles) {
-    // Check if this profile's notify_time matches current hour
-    const [notifyHour] = (profile.notify_time ?? '08:00').split(':');
-    const [currentHour] = currentTime.split(':');
-    if (notifyHour !== currentHour) continue;
-
     // Get chores assigned to this profile due today
     const { data: chores } = await supabase
       .from('chores')
@@ -62,7 +54,7 @@ export async function GET(request: Request) {
 
     if (!dueToday.length) continue;
 
-    // get push subscriptions for this user
+    // Get push subscription for this profile
     const { data: sub } = await supabase
       .from('push_subscriptions')
       .select('subscription')
@@ -82,8 +74,9 @@ export async function GET(request: Request) {
       );
       sent++;
     } catch (err) {
-      console.error(`Failed to send to profile ${profile.id}: `, err);
+      console.error(`Failed to send to profile ${profile.id}:`, err);
     }
   }
+
   return NextResponse.json({ sent });
 }

@@ -7,8 +7,8 @@ A progressive web app (PWA) for two people to manage shared household chores. Bu
 - **Today tab** — personal checklist of your chores due today, tap to mark complete
 - **Chores tab** — add, edit, and delete chores with daily, weekly, or monthly recurrence
 - **Calendar tab** — monthly overview of all household chores, colour-coded by status
-- **Settings tab** — manage your profile, view your invite code, and set notification preferences
-- **Push notifications** — daily reminders at your chosen time via Web Push API
+- **Settings tab** — manage your profile, view your invite code
+- **Push notifications** — daily reminders at 8am SGT via Web Push API
 - **Real-time sync** — completions and chore changes sync instantly between devices via Supabase Realtime
 - **Installable PWA** — add to home screen on Android and iOS for a native app experience
 
@@ -30,7 +30,7 @@ A progressive web app (PWA) for two people to manage shared household chores. Bu
 
 ```
 households        id, name, invite_code, created_by
-profiles          id, user_id, household_id, name, colour, notify_time
+profiles          id, user_id, household_id, name, colour
 chores            id, household_id, name, assigned_to, recurrence, day_of_week, day_of_month
 completions       id, chore_id, completed_by, period_key, completed_at
 push_subscriptions  id, user_id, profile_id, subscription
@@ -108,13 +108,12 @@ The invite code can always be found again in the **Settings tab**.
 
 ## Push Notifications
 
-Notifications are sent via a Vercel Cron Job that runs every hour at `:00`. Each user sets their preferred reminder time in the Settings tab — the app converts it to UTC for storage and back to local time for display.
+Notifications are sent via a Vercel Cron Job that runs everyday at 8am SGT.
 
 The cron job calls `/api/send-notifications` which:
 
-1. Finds all profiles whose `notify_time` matches the current UTC hour
-2. Fetches their chores due today
-3. Sends a push notification via `web-push` signed with VAPID keys
+1. Finds all profiles and fetches their chores due today
+2. Sends a push notification via `web-push` signed with VAPID keys
 
 ### iOS Note
 
