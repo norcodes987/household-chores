@@ -26,13 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
+    <html lang='en' style={{ colorScheme: 'light' }}>
       <link
         rel='apple-touch-icon'
         sizes='180x180'
         href='/apple-touch-icon.png'
       />
-      <body className='bg-gray-50 min-h-screen'>
+      <body className='bg-gray-50 text-gray-900 min-h-screen'>
         <ServiceWorkerRegistration />
         {children}
       </body>
