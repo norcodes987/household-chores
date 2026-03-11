@@ -222,11 +222,13 @@ vercel.json                         # Cron job schedule (0 0 * * *)
 
 Chores use a `period_key` string to track completions per cycle, enabling automatic resets each period:
 
-| Recurrence | Period key format | Example      |
-| ---------- | ----------------- | ------------ |
-| Daily      | `YYYY-MM-DD`      | `2026-03-10` |
-| Weekly     | `YYYY-Www`        | `2026-W10`   |
-| Monthly    | `YYYY-MM`         | `2026-03`    |
+| Recurrence   | Period key format | Example      |
+| ------------ | ----------------- | ------------ |
+| Daily        | `YYYY-MM-DD`      | `2026-03-10` |
+| Weekly       | `YYYY-Www`        | `2026-W10`   |
+| Monthly      | `YYYY-MM`         | `2026-03`    |
+| Biweekly     | `YYYY-Www`        | `2026-W10`   |
+| Twice Weekly | `YYYY-MM`         | `2026-W10`   |
 
 A new period = a fresh slate. No manual resets needed.
 

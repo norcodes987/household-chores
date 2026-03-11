@@ -47,7 +47,19 @@ export async function GET(request: Request) {
 
     const dueToday = chores.filter((c) => {
       if (c.recurrence === 'daily') return true;
-      if (c.recurrence === 'weekly') return c.day_of_week === dayOfWeek;
+      if (c.recurrence === 'weekly') return c.day_of_week?.[0] === dayOfWeek;
+      if (c.recurrence === 'twice_weekly')
+        return (c.day_of_week ?? []).includes(dayOfWeek);
+      if (c.recurrence === 'biweekly') {
+        if (!c.day_of_week?.includes(dayOfWeek)) return false;
+        if (!c.start_date) return false;
+        const anchor = new Date(c.start_date);
+        const msPerDay = 86400000;
+        const daysDiff = Math.floor(
+          (now.getTime() - anchor.getTime()) / msPerDay,
+        );
+        return daysDiff >= 0 && Math.floor(daysDiff / 7) % 2 === 0;
+      }
       if (c.recurrence === 'monthly') return c.day_of_month === dayOfMonth;
       return false;
     });

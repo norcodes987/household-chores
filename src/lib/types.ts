@@ -11,9 +11,10 @@ export type Chore = {
   household_id: string;
   name: string;
   assigned_to: string | null;
-  recurrence: 'daily' | 'weekly' | 'monthly';
-  day_of_week: number | null; // 0-6
+  recurrence: 'daily' | 'weekly' | 'monthly' | 'biweekly' | 'twice_weekly';
+  day_of_week: number[] | null; // 0-6
   day_of_month: number | null; // 1-31
+  start_date: string | null;
   created_at: string;
   profile?: Profile;
 };

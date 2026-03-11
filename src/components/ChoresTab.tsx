@@ -38,18 +38,33 @@ export default function ChoresTab({
   }, []);
 
   async function fetchData() {
-    const [{ data: choresData }, { data: profilesData }] = await Promise.all([
-      supabase
-        .from('chores')
-        .select('*')
-        .eq('household_id', currentProfile.household_id)
-        .order('created_at'),
-      supabase
-        .from('profiles')
-        .select('*')
-        .eq('household_id', currentProfile.household_id)
-        .order('created_at'),
-    ]);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    console.log('Current user:', user?.id);
+
+    const { data: profileCheck } = await supabase
+      .from('profiles')
+      .select('id, household_id')
+      .eq('user_id', user?.id ?? '')
+      .single();
+    console.log('Profile check:', profileCheck);
+
+    const [{ data: choresData, error: choresError }, { data: profilesData }] =
+      await Promise.all([
+        supabase
+          .from('chores')
+          .select('*')
+          .eq('household_id', currentProfile.household_id)
+          .order('created_at'),
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('household_id', currentProfile.household_id)
+          .order('created_at'),
+      ]);
+    console.log('choresError:', choresError);
+    console.log('choresData:', choresData);
     setChores(choresData ?? []);
     setProfiles(profilesData ?? []);
     setLoading(false);
@@ -91,12 +106,16 @@ export default function ChoresTab({
     }
   }
   const recurrenceLabel = (chore: Chore) => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayNames = (chore.day_of_week ?? []).map((d) => days[d]).join(' & ');
+
     if (chore.recurrence === 'daily') return 'Every day';
-    if (chore.recurrence === 'weekly') {
-      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      return `Every ${days[chore.day_of_week ?? 0]}`;
-    }
-    return `Monthly on the ${chore.day_of_month}${ordinal(chore.day_of_month ?? 1)}`;
+    if (chore.recurrence === 'weekly') return `Every ${dayNames}`;
+    if (chore.recurrence === 'biweekly') return `Every other ${dayNames}`;
+    if (chore.recurrence === 'twice_weekly') return `${dayNames} every week`;
+    if (chore.recurrence === 'monthly')
+      return `Monthly on the ${chore.day_of_month}${ordinal(chore.day_of_month ?? 1)}`;
+    return '';
   };
   return (
     <div className='p-4'>
