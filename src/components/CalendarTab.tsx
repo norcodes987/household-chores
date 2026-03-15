@@ -2,7 +2,12 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Chore, Completion, Profile } from '@/lib/types';
-import { getPeriodKey, getCalendarGrid, getChoresForDate } from '@/lib/period';
+import {
+  getPeriodKey,
+  getCalendarGrid,
+  getChoresForDate,
+  isChoreToday,
+} from '@/lib/period';
 import { ChevronLeft, ChevronRight, X, Check } from 'lucide-react';
 
 export default function CalendarTab({
@@ -28,9 +33,9 @@ export default function CalendarTab({
     const channel = supabase
       .channel('calendar-completions')
       .on(
-        'postgres_changes',
+        'postgres_changes' as any,
         { event: '*', schema: 'public', table: 'completions' },
-        fetchCompletions,
+        () => fetchCompletions(),
       )
       .subscribe();
 
@@ -51,25 +56,36 @@ export default function CalendarTab({
         .select('*')
         .eq('household_id', currentProfile.household_id),
     ]);
-    setChores(choresData ?? []);
+    const loadedChores = choresData ?? [];
+    setChores(loadedChores);
     setProfiles(profilesData ?? []);
-    await fetchCompletions();
+    await fetchCompletions(loadedChores);
     setLoading(false);
   }
 
-  async function fetchCompletions() {
+  async function fetchCompletions(choreList = chores) {
+    const today = new Date();
+    const periodKeys = [
+      getPeriodKey('daily', today),
+      getPeriodKey('weekly', today),
+      getPeriodKey('monthly', today),
+    ];
+
+    const todayChoreIds = choreList
+      .filter((c) => isChoreToday(c, today))
+      .map((c) => c.id);
+
+    if (!todayChoreIds.length) {
+      setCompletions([]);
+      return;
+    }
+
     const { data } = await supabase
       .from('completions')
       .select('*')
-      .in(
-        'chore_id',
-        (
-          await supabase
-            .from('chores')
-            .select('id')
-            .eq('household_id', currentProfile.household_id)
-        ).data?.map((c) => c.id) ?? [],
-      );
+      .in('chore_id', todayChoreIds)
+      .in('period_key', periodKeys);
+
     setCompletions(data ?? []);
   }
 

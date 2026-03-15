@@ -48,27 +48,39 @@ export default function TodayTab({
         .eq('household_id', currentProfile.household_id)
         .order('created_at'),
     ]);
-    setChores(choresData ?? []);
+
+    const loadedChores = choresData ?? [];
+    setChores(loadedChores);
     setProfiles(profilesData ?? []);
-    await fetchCompletions();
+    await fetchCompletions(loadedChores); // ← pass chores directly
     setLoading(false);
   }
 
-  async function fetchCompletions() {
+  async function fetchCompletions(choreList = chores) {
     const today = new Date();
-    // fetch completions for all possible period keys for today
     const periodKeys = [
       getPeriodKey('daily', today),
       getPeriodKey('weekly', today),
       getPeriodKey('monthly', today),
     ];
+
+    const todayChoreIds = choreList
+      .filter((c) => isChoreToday(c, today))
+      .map((c) => c.id);
+
+    if (!todayChoreIds.length) {
+      setCompletions([]);
+      return;
+    }
+
     const { data } = await supabase
       .from('completions')
       .select('*')
+      .in('chore_id', todayChoreIds)
       .in('period_key', periodKeys);
+
     setCompletions(data ?? []);
   }
-
   async function toggleCompletion(chore: Chore) {
     setToggling(chore.id);
 
