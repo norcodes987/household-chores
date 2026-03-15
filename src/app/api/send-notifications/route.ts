@@ -90,5 +90,11 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ sent });
+  return NextResponse.json({
+    sent,
+    timestamp: new Date().toISOString(),
+    dayOfWeek,
+    dayOfMonth,
+    profilesChecked: profiles.length,
+  });
 }
