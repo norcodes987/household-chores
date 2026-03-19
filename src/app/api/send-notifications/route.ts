@@ -11,11 +11,22 @@ webpush.setVapidDetails(
 const CRON_SECRET = process.env.CRON_SECRET;
 
 export async function GET(request: Request) {
-  // const authHeader = request.headers.get('authorization');
+  const authHeader = request.headers.get('authorization');
   // if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
   //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   // }
-
+  console.log('=== NOTIFICATIONS START ===');
+  console.log('VAPID_MAILTO:', process.env.VAPID_MAILTO);
+  console.log(
+    'VAPID_PUBLIC_KEY exists:',
+    !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  );
+  console.log('VAPID_PRIVATE_KEY exists:', !!process.env.VAPID_PRIVATE_KEY);
+  console.log('SUPABASE_URL exists:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
+  console.log(
+    'SERVICE_ROLE_KEY exists:',
+    !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+  );
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
