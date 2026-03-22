@@ -37,7 +37,8 @@ export function getPeriodKey(
 ): string {
   if (recurrence === 'daily') return toLocalDateString(date);
   if (recurrence === 'weekly') return getISOWeek(date);
-  if (recurrence === 'twice_weekly') return getISOWeek(date); // same period as weekly
+  if (recurrence === 'twice_weekly')
+    return `${getISOWeek(date)}-${date.getDay()}`;
   if (recurrence === 'biweekly') {
     const anchor = startDate ? new Date(startDate) : date;
     const cycle = getBiweeklyCycle(date, anchor);

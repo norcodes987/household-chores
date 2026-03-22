@@ -61,6 +61,7 @@ export default function TodayTab({
     const periodKeys = [
       getPeriodKey('daily', today),
       getPeriodKey('weekly', today),
+      getPeriodKey('twice_weekly', today),
       getPeriodKey('monthly', today),
     ];
 

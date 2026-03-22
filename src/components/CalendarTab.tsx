@@ -106,7 +106,7 @@ export default function CalendarTab({
   }
 
   function isCompleted(choreId: string, date: Date, recurrence: string) {
-    const periodKey = getPeriodKey(recurrence as any, date);
+    const periodKey = getPeriodKey(recurrence, date);
     return completions.some(
       (c) => c.chore_id === choreId && c.period_key === periodKey,
     );
